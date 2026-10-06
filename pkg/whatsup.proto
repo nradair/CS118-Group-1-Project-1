@@ -27,7 +27,7 @@ message Empty {}
 // `user` and `body`.
 message ChatMessage {
     string user = 1;
-    body = 2;
+    string body = 2;
 }
 
 // TODO: Create a ChatMessages message that contains a repeated list of

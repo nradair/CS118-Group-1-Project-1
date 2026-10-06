@@ -92,6 +92,12 @@ func (s Server) Connect(_ context.Context, r *Registration) (*AuthToken, error) 
 // (when you initially receive it, it will have the name of the recipient instead).
 // TODO: Implement `Send`. If any errors occur, return any error message you'd like.
 func (s Server) Send(ctx context.Context, msg *ChatMessage) (*Success, error) {
+	user := fmt.Sprintf("%v", ctx.Value("username"))
+	msg.user = user
+	s.Inboxes[user] <- msg
+
+	return nil, errors.New("Sending error")
+
 }
 
 // Implementation of the Fetch method defined in our `.proto` file.
@@ -102,6 +108,14 @@ func (s Server) Send(ctx context.Context, msg *ChatMessage) (*Success, error) {
 //
 // TODO: Implement Fetch. If any errors occur, return any error message you'd like.
 func (s Server) Fetch(ctx context.Context, _ *Empty) (*ChatMessages, error) {
+	user := fmt.Sprintf("%v", ctx.Value("username"))
+	for BATCH_SIZE > len(s.Inboxes[user]) {
+		
+	}
+
+
+	return nil, errors.New("Fetching error")
+
 }
 
 // Implementation of the List method defined in our `.proto` file.
