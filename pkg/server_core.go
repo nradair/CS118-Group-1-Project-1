@@ -109,12 +109,12 @@ func (s Server) Send(ctx context.Context, msg *ChatMessage) (*Success, error) {
 // TODO: Implement Fetch. If any errors occur, return any error message you'd like.
 func (s Server) Fetch(ctx context.Context, _ *Empty) (*ChatMessages, error) {
 	user := fmt.Sprintf("%v", ctx.Value("username"))
-	msgs := &ChatMessages{cm1: []*ChatMessage}
+	msgs := &ChatMessages{Messages: []*ChatMessage}
 
 	for _ = 0; _ < BATCH_SIZE; _++ {
 		select {
 		case msg := <- s.Inboxes[user]:
-			msgs.cm1 := append(msgs.cm1, msg)
+			msgs.Messages := append(msgs.Messages, msg)
 		default:
 			// Does nothing if inbox is empty
 		}

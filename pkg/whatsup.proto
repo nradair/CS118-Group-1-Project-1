@@ -33,7 +33,7 @@ message ChatMessage {
 // TODO: Create a ChatMessages message that contains a repeated list of
 // of ChatMessage
 message ChatMessages {
-    repeated ChatMessage cm1 = 1;
+    repeated ChatMessage Messages = 1;
 }
 
 service WhatsUp {
