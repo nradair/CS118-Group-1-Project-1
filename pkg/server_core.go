@@ -92,11 +92,17 @@ func (s Server) Connect(_ context.Context, r *Registration) (*AuthToken, error) 
 // (when you initially receive it, it will have the name of the recipient instead).
 // TODO: Implement `Send`. If any errors occur, return any error message you'd like.
 func (s Server) Send(ctx context.Context, msg *ChatMessage) (*Success, error) {
-	user := fmt.Sprintf("%v", ctx.Value("username"))
-	msg.user = user
-	s.Inboxes[user] <- msg
+	sendingUser := fmt.Sprintf("%v", ctx.Value("username"))
+	receivingUser := msg.User
+	msg.User = sendingUser
 
-	return nil, errors.New("Sending error")
+	s.Inboxes[receivingUser] <- msg
+
+	success := &Success{
+		Ok: true,
+	}
+
+	return success, nil
 
 }
 
@@ -109,18 +115,21 @@ func (s Server) Send(ctx context.Context, msg *ChatMessage) (*Success, error) {
 // TODO: Implement Fetch. If any errors occur, return any error message you'd like.
 func (s Server) Fetch(ctx context.Context, _ *Empty) (*ChatMessages, error) {
 	user := fmt.Sprintf("%v", ctx.Value("username"))
-	msgs := &ChatMessages{Messages: []*ChatMessage}
+	msgs := &ChatMessages{}
 
-	for _ = 0; _ < BATCH_SIZE; _++ {
+	// fmt.Println(ctx)
+
+	for i := 0; i < BATCH_SIZE; i++ {
 		select {
 		case msg := <- s.Inboxes[user]:
-			msgs.Messages := append(msgs.Messages, msg)
+			msgs.Messages = append(msgs.Messages, msg)
+			// fmt.Println(msg)
 		default:
 			// Does nothing if inbox is empty
 		}
 	}
 
-	return msgs, errors.New("Fetching error")
+	return msgs, nil
 
 }
 

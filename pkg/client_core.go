@@ -41,7 +41,7 @@ func Register(client WhatsUpClient, user string) (context.Context, error) {
     registration.SourceUser = user
     authToken, err := client.Connect(context.Background(), registration)
     if err != nil {
-        return nil, err
+        return nil, errors.New("Register error")
     }
 
     md := metadata.New(nil)
@@ -49,7 +49,7 @@ func Register(client WhatsUpClient, user string) (context.Context, error) {
     backgroundCtx := context.Background()
     ctx := metadata.NewOutgoingContext(backgroundCtx, md)
 
-    return ctx, errors.New("Register error")
+    return ctx, nil
 
 }
 
@@ -122,11 +122,16 @@ func Execute(client WhatsUpClient, ctx context.Context, arguments ...string) (st
             }
 
             all := []string{}
-            for _, user := range users {
-                all = append(all, fmt.Sprintf("%s,", user))
+            length := len(users.Users)
+            for i, user := range users.Users {
+                if i < length - 1 {
+                    all = append(all, fmt.Sprintf("%s,", user))
+                } else {
+                    all = append(all, fmt.Sprintf("%s", user))
+                }
             }
 
-            return fmt.Sprintf("%s\n", strings.Join(all, "\n")), nil
+            return fmt.Sprintf("%s\n", strings.Join(all, "")), nil
 
         case "quit":
 
